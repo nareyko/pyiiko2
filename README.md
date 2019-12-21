@@ -1,5 +1,5 @@
 <p align="center"><img src="https://habrastorage.org/webt/bi/od/mp/biodmpylxpnkxhjtewsjro_-8ps.jpeg" height="180"></p>
-<p align="center"><a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/pypi/l/requests.svg" alt="Apache 2.0 License" height="18"></a><a href="https://www.codacy.com/manual/nareyko/pyiiko2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nareyko/pyiiko2&amp;utm_campaign=Badge_Grade" alt="www.codacy.com"><img src="https://api.codacy.com/project/badge/Grade/6bc86d309ce5459da06469b8e39ee996" alt="Codacy" height="18"></a></p>
+<p align="center"><a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/pypi/l/requests.svg" alt="Apache 2.0 License" height="18"></a><a href="https://app.codeship.com/projects/379033"><img src="https://app.codeship.com/projects/cdd9a8d0-0671-0138-5b33-1a3a19f3ca85/status?branch=master" alt='Codeship Status for nareyko/pyiiko2' height="18"></a><a href="https://www.codacy.com/manual/nareyko/pyiiko2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nareyko/pyiiko2&amp;utm_campaign=Badge_Grade" alt="www.codacy.com"><img src="https://api.codacy.com/project/badge/Grade/6bc86d309ce5459da06469b8e39ee996" alt="Codacy" height="18"></a></p>
 
 ## Credits
 
