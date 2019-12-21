@@ -59,7 +59,7 @@ class IikoServer:
 
         try:
             logout = requests.get(
-                self.address + 'api/logout?key=' + self.token()
+                self.address + 'api/logout?key=' + self.token())
             print("\nТокен уничтожен: " + self.token())
             self._token = None
             return logout
