@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import requests
-from lxml import etree
+from defusedxml import etree
 from io import StringIO
 
 DEFAULT_TIMEOUT = 4
