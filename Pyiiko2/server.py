@@ -22,10 +22,11 @@ class IikoServer(object):
 
     @property
     def timeout(self):
-        return str(self._timeout)
+        return self._timeout
 
     def set_timeout(self, timeout=DEFAULT_TIMEOUT):
         self._timeout = timeout
+
     @property
     def token(self):
         return str(self._token)
