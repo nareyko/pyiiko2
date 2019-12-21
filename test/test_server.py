@@ -1,5 +1,5 @@
 import pytest
-import Pyiiko
+import Pyiiko2
 import requests
 from settings import i
 
