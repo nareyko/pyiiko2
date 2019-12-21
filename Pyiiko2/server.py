@@ -13,17 +13,16 @@ class IikoServer:
 
     """
 
-    def __init__(self, ip=None, login=None, password=None, token=None):
-
+    def __init__(self, ip=None, port=None, login=None, passhash=None, token=None):
         self.login = login
-        self.password = password
-        self.address = 'http://' + ip + '/resto/'
-        self._token = (token or self.get_token())
+        self.passhash = passhash
+        self.address = 'http://' + ip + ':'+ (str(port) or '80') + '/resto/'
+        self._token = token
 
     def token(self):
         return self._token
 
-    def get_token(self):
+    def login(self):
         """Метод получает новый токен
         .. note::
 
@@ -37,13 +36,20 @@ class IikoServer:
             """
 
         try:
-            url = self.address + 'api/auth?login=' + self.login + "&pass=" + self.password
-            return requests.get(url=url, timeout=DEFAULT_TIMEOUT).text
+            # Уничтожаем токен, если он он существует
+            if self._token is not None:
+                self.logout()
+
+            url = self.address + 'api/auth?login=' + self.login + "&pass=" + self.passhash
+            login = requests.get(url=url, timeout=DEFAULT_TIMEOUT)
+            if login.status_code == 200:
+                self._token = login.text
+            return login
 
         except Exception as e:
             print(e)
 
-    def quit_token(self):
+    def logout(self):
         """Уничтожение токена
 
         """
@@ -52,6 +58,7 @@ class IikoServer:
             logout = requests.get(
                 self.address + 'api/logout?key=' + self._token)
             print("\nТокен уничтожен: " + self._token)
+            self._token = None
             return logout
 
         except requests.exceptions.ConnectTimeout:
