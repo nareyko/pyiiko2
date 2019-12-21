@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import requests
-import hashlib
 from lxml import etree
 from io import StringIO
 
@@ -13,15 +12,24 @@ class IikoServer(object):
 
     """
 
-    def __init__(self, ip=None, port=None, login=None, passhash=None, token=None):
+    def __init__(self, ip=None, port=None, login=None, passhash=None, token=None, timeout=DEFAULT_TIMEOUT):
         self.address = 'http://' + ip + ':'+ (str(port) or '80') + '/resto/'
         self._login = login
         self._passhash = passhash
         self._token = token
+        self.set_timeout(timeout)
+
+    @property
+    def timeout(self):
+        return self._timeout
+
+    def set_timeout(self, timeout=DEFAULT_TIMEOUT):
+        self._timeout = timeout
 
     @property
     def token(self):
         return str(self._token)
+
 
     def __del__(self): 
         if self._token is not None:
@@ -46,7 +54,7 @@ class IikoServer(object):
                 self.logout()
 
             url = self.address + 'api/auth?login=' + self._login + "&pass=" + self._passhash
-            login = requests.get(url=url, timeout=DEFAULT_TIMEOUT)
+            login = requests.get(url=url, timeout=self.timeout)
             if login.status_code == 200:
                 self._token = login.text
             return login
@@ -87,11 +95,11 @@ class IikoServer(object):
     def server_info(self):
         """Вовращает json файл с информацией о сервере и статусе лицензии
 
-                :returns: Информация о сервере в формате json
+                :returns: request
                 """
         try:
             return requests.get(
-                self.address + 'get_server_info.jsp?encoding=UTF-8').json
+                self.address + 'get_server_info.jsp?encoding=UTF-8')
 
         except requests.exceptions.ConnectTimeout:
             print("Не удалось подключиться к серверу")
@@ -115,39 +123,37 @@ class IikoServer(object):
            SALEPOINT, Точка продаж
            STORE, Склад
 
+            :returns: request
 
         """
         try:
             urls = self.address + "api/corporation/departments?key=" + self.token
-            return requests.get(url=urls, timeout=DEFAULT_TIMEOUT).content
+            return requests.get(url=urls, timeout=self.timeout)
         except Exception as e:
             print(e)
 
     def stores(self):
         """Список складов
 
-        :returns: Все склады ТП в виде структуры corporateItemDto
+        :returns: request
 
 
         """
         try:
             ur = self.address + 'api/corporation/stores?key=' + self.token
-            return requests.get(ur, timeout=DEFAULT_TIMEOUT).text
+            return requests.get(ur, timeout=self.timeout)
         except Exception as e:
             print(e)
 
     def groups(self):
         """Список групп и отделений
 
-        :returns: Все группы отделений, отделения и точки продаж ТП в виде структуры groupDto. \
-                    В группе отделений может быть несколько точек продаж, но главная касса
-                    (свойство groupDto/pointOfSaleDtoes/pointOfSaleDto/main=true) может быть подключена только
-                    к одной из них. В iikoChain информация о кассе точки продаж
-                    (groupDto/pointOfSaleDtoes/pointOfSaleDto/cashRegisterInfo) может отсутствовать.
+        :returns: request
+
         """
         try:
             ur = self.address + 'api/corporation/groups?key=' + self._token
-            return requests.get(ur, timeout=DEFAULT_TIMEOUT)
+            return requests.get(ur, timeout=self.timeout)
 
         except requests.exceptions.ConnectTimeout:
             print("Не удалось подключиться к серверу")
@@ -155,12 +161,12 @@ class IikoServer(object):
     def terminals(self):
         """Список терминалов.
 
-        :returns: Все терминалы ТП в виде структуры terminalDto. Как правило, интересны только фронтовые \
-                    терминалы, см. поиск терминалов /corporation/terminal/search
+            :returns: request
+
         """
         try:
             ur = self.address + 'api/corporation/terminals?key=' + self.token
-            return requests.get(ur, timeout=DEFAULT_TIMEOUT).content
+            return requests.get(ur, timeout=self.timeout)
 
         except requests.exceptions.ConnectTimeout:
             print("Не удалось подключиться к серверу")
@@ -174,14 +180,13 @@ class IikoServer(object):
 
         :type code: [departmentCode]
 
-        :returns: Структура corporateItemDto, если существует подразделение с данным кодом. \
-                    Поиск торгового предприятия по коду. Имеет смысл только для подразделений с типом DEPARTMENT \
-                    и в основном только в iikoChain, т.к. в рамках iikoRMS только одна сущность с таким типом
+        :returns: request
+
         """
         try:
             ur = self.address + 'api/corporation/departments/search?key=' + self.token
             return requests.get(
-                ur, params=code, timeout=DEFAULT_TIMEOUT).content
+                ur, params=code, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -194,13 +199,12 @@ class IikoServer(object):
                         этой строки в код склада с учетом регистра.
         :type code: [storeCode]
 
-        :returns: corporateItemDto, если существует склад с данным кодом. Поиск склада по коду. Для работы этого \
-                    метода  необходимо, чтобы коды складов в ТП были заполнены (данное поле является необязательным \
-                    и по умолчанию пусто
+        :returns: request
+
         """
         try:
-            ur = self.address + 'api/corporation/stores/search?key=' + self.token
-            return requests.get(ur, params=code)
+            url = self.address + 'api/corporation/stores/search?key=' + self.token
+            return requests.get(url, params=code)
 
         except requests.exceptions.ConnectTimeout:
             print("Не удалось подключиться к серверу")
@@ -213,11 +217,12 @@ class IikoServer(object):
         :type name: regex
         :param departmentId: ID подразделения
         :type departmentId: string
+        :returns: request
         """
         try:
             urls = self.address + 'api/corporation/terminal/search?key=' + self.token
             return requests.get(
-                url=urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
+                url=urls, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -230,12 +235,12 @@ class IikoServer(object):
         :param name: (regex) - (optional) Имя терминала в том виде, как он отображается в бекофисе.
         :param computerName: (regex) - (optional) Имя компьютера
 
-        :return: Список terminalDto, если существуют подходящие терминалы
+        :returns: request
         """
         try:
             urls = self.address + 'api/corporation/terminal/search?key=' + self.token + '&anonymous=' + anonymous
             return requests.get(
-                urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
+                urls, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -243,10 +248,13 @@ class IikoServer(object):
     "----------------------------------Работники----------------------------------"
 
     def employees(self):
-        """Работники"""
+        """
+        Работники
+        :returns: request
+        """
         try:
             urls = self.address + 'api/employees?key=' + self.token
-            return requests.get(urls, timeout=DEFAULT_TIMEOUT).content
+            return requests.get(urls, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -266,12 +274,12 @@ class IikoServer(object):
         новых событий. В штатном режиме одно и тоже событие повторно с разными ревизиями не приходит, однако \
         такой гарантии не даётся. ID (UUID) события уникален, может использоваться в качестве ключа.
 
-        :return: Список событий в формате eventsList (см. XSD Список событий)
+        :returns: request
         """
         try:
             ur = self.address + 'api/events?key=' + self.token
             return requests.get(
-                ur, params=kwargs, timeout=DEFAULT_TIMEOUT).content
+                ur, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -297,13 +305,13 @@ class IikoServer(object):
                 </orderNums>
             </eventsRequestData>
 
-        :return: Дерево событий в формате groupsList (см. XSD Дерево событий).
+        :returns: request
         """
 
         try:
             ur = self.address + 'api/events?key=' + self.token
             return requests.post(
-                ur, data=body, timeout=DEFAULT_TIMEOUT).content
+                ur, data=body, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -312,11 +320,12 @@ class IikoServer(object):
         """
         Дерево событий.
 
+        :returns: request
 
         """
         try:
             urls = self.address + 'api/events/metadata?key=' + self.token
-            return requests.get(urls, timeout=DEFAULT_TIMEOUT).content
+            return requests.get(urls, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -350,11 +359,12 @@ class IikoServer(object):
 
         :param includeDeleted: (bool) - (optional) Включать ли удаленные элементы номенклатуры в результат. По умолчанию false. Реализовано в 5.0 и новее.
 
+        :returns: request
         """
         try:
             urls = self.address + 'api/products?key=' + self.token
             return requests.get(
-                urls, params=includeDeleted, timeout=DEFAULT_TIMEOUT).content
+                urls, params=includeDeleted, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -372,12 +382,13 @@ class IikoServer(object):
         :param productType: (regex) - (optional) Тип номенклатуры.
 
         Выгрузка и поиск идет по всем неудаленным элементам номенклатуры. Включая товары поставщика. Т.к. сейчас нет возможности удалить товар поставщика, то выгрузка потянет все товары поставщика, даже те, которые реально не используются и не участвуют ни в одной связке товар у нас - товар поставщика.
+        :returns: request
 
         """
         try:
             urls = self.address + 'api/products/search/?key=' + self.token
             return requests.get(
-                urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
+                urls, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -387,11 +398,11 @@ class IikoServer(object):
     def suppliers(self):
         """Список всех поставщиков
 
-        :return: Список всех поставщиков. Структура employees
+        :returns: request
         """
         try:
             urls = self.address + 'api/suppliers?key=' + self.token
-            return requests.get(urls, timeout=DEFAULT_TIMEOUT).content
+            return requests.get(urls, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -402,13 +413,13 @@ class IikoServer(object):
         :param name: (regex) - (optional) регулярное выражение имени поставщика.
         :param code: (regex) - (optional) регулярное выражение кода поставщика.
 
-        :return: Список найденных поставщиков. Структура employees (см. XSD Сотрудники)
+        :returns: request
         """
         try:
             urls = self.address + 'api/suppliers?key=' + self.token
             payload = {'name': name, 'code': code}
             return requests.get(
-                urls, params=payload, timeout=DEFAULT_TIMEOUT).content
+                urls, params=payload, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -417,11 +428,12 @@ class IikoServer(object):
         """Поиск поставщика
 
         :param code: (date - DD.MM.YYYY) - (optional) Дата начала действия прайс-листа, необязательный. Если параметр не указан, возвращается последний прайс-лист.
+        :returns: request
         """
         try:
             urls = self.address + 'api/suppliers/' + code + '/pricelist?key=' + self.token
             return requests.get(
-                urls, params=date, timeout=DEFAULT_TIMEOUT).content
+                urls, params=date, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -461,13 +473,13 @@ class IikoServer(object):
                 - Описание полей OLAP отчета по доставкам.
             По полю можно проводить группировку, если значение в колонке Grouping для поля равно true.
 
-        :return: Структура report
+        :returns: request
 
         """
         try:
             urls = self.address + 'api/reports/olap?report=' + report + '&key=' + self.token + '&from=' + data_from + '&to=' + data_to
             return requests.get(
-                urls, params=kwargs, timeout=DEFAULT_TIMEOUT).text
+                urls, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -488,7 +500,7 @@ class IikoServer(object):
         :param showCostCorrections: (boolean) - Включать ли коррекции себестоимости. Данная опция учитывается только если задан фильтр по типам документов. В противном случае коррекции включаются.
         :param presetId: (GUID) - (optional) Id преднастроенного отчета. Если указан, то все настройки, кроме дат, игнорируются.
 
-        :returns: Структура storeReportPresets (см. XSD Пресеты отчетов по складским операциям).
+        :returns: request
 
         """
         try:
@@ -499,7 +511,7 @@ class IikoServer(object):
                     stores, documentTypes, productDetalization,
                     showCostCorrections, presetId
                 },
-                timeout=DEFAULT_TIMEOUT).content
+                timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -507,12 +519,12 @@ class IikoServer(object):
     def store_presets(self):
         """Пресеты отчетов по складским операциям
 
-        :returns: Структура storeReportPresets (см. XSD Пресеты отчетов по складским операциям).
+        :returns: request
 
         """
         try:
             urls = self.address + 'api/reports/storeReportPresets?key=' + self.token
-            return requests.get(urls, timeout=DEFAULT_TIMEOUT).content
+            return requests.get(urls, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -526,13 +538,13 @@ class IikoServer(object):
         :param hourFrom: (hh) Час начала интервала выборки в сутках (по умолчанию -1, все время), по умолчанию -1.
         :param hourTo: (hh) Час окончания интервала выборки в сутках (по умолчанию -1, все время), по умолчанию -1.
 
-        :returns: Структура dayDishValue (см. XSD Расход продуктов по продажам)
+        :returns: request
         """
         try:
             urls = self.address + 'api/reports/productExpense?key=' + self.token
             return requests.get(
                 urls, params={departament, kwargs},
-                timeout=DEFAULT_TIMEOUT).content
+                timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -548,7 +560,7 @@ class IikoServer(object):
         :param dishDetails: (boolean) Включать ли разбивку по блюдам (true/false), по умолчанию false.
         :param allRevenue: (boolean)  Фильтрация по типам оплат (true - все типы, false - только выручка), по умолчанию true.
 
-        :returns: Структура dayDishValue (см. XSD Отчет по выручке)
+        :returns: request
         """
 
         try:
@@ -557,7 +569,7 @@ class IikoServer(object):
             return requests.get(
                 urls,
                 params={dishDetails, allRevenue, kwargs},
-                timeout=DEFAULT_TIMEOUT).content
+                timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -569,7 +581,7 @@ class IikoServer(object):
         :param dateFrom: (DD.MM.YYYY) Начальная дата.
         :param dateTo: (DD.MM.YYYY) Конечная дата.
 
-        :returns: Структура budgetPlanItemDtoes (см. XSD План по выручке за день)
+        :returns: request
 
 
         """
@@ -577,7 +589,7 @@ class IikoServer(object):
             urls = self.address + 'api/reports/monthlyIncomePlan?key=' + self.token + \
                    '&department=' + departament
             return requests.get(
-                urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
+                urls, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -591,14 +603,14 @@ class IikoServer(object):
         :param productArticle: (string) Артикул продукта (приоритет поиска:productArticle, product)
         :param includeSubtree: (bool) - (optional) Включать ли в отчет строки поддеревьев (по умолчанию false)
 
-        :returns: Структура budgetPlanItemDtoes (см. XSD План по выручке за день)
+        :returns: request
         """
         try:
             urls = self.address + 'api/reports/ingredientEntry?key=' + self.token
             return requests.get(
                 urls,
                 params={departament, includeSubtree, kwargs},
-                timeout=DEFAULT_TIMEOUT).content
+                timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -614,79 +626,25 @@ class IikoServer(object):
         """
         try:
             url = self.address + 'api/v2/reports/olap?key=' + self.token
-            return requests.post(url,json=json,timeout=DEFAULT_TIMEOUT)
+            return requests.post(url,json=json,timeout=self.timeout)
 
         except Exception as e:
             print(e)
 
-    def olap2columns(self,
-              reportType,
-              groupingAllowed=False,
-              filteringAllowed=False,
-              json=None):
+    def olap2columns(self, reportType):
         """Поля OLAP-отчета
 
         :param reportType: (Тип отчета)
             | ``SALES`` - По продажам.
             | ``TRANSACTIONS`` - По транзакциям.
             | ``DELIVERIES`` - По доставкам.
-        :param json: (optional) Json с полями
-        :type json: json
-
-        .. code-block:: json
-
-           {
-              "FieldName":{
-                "name":"StringValue",
-                "type":"StringValue",
-                "aggregationAllowed":"booleanValue",
-                "groupingAllowed":"booleanValue",
-                "filteringAllowed":"booleanValue",
-                "tags":[
-                  "StringValue1",
-                  "StringValue2",
-                  "...",
-                  "StringValueN"
-                ]
-              }
-            }
-
-        :param FieldName: Название колонки отчета. Именно это название используется для получения данных отчета
-        :type FieldName: string
-        :param name: Название колонки отчета в iikoOffice. Справочная информация.
-        :type name: string
-        :param type: Тип поля. Возможны следующие значения:
-        :type type: string
-
-
-        | ENUM - Перечислимые значения
-        | STRING - Строка
-        | ID - Внутренний идентификатор объекта в iiko (начиная с 5.0).
-        | DATETIME - Дата и время
-        | INTEGER - Целое
-        | PERCENT - Процент (от 0 до 1)
-        | DURATION_IN_SECONDS - Длительность в секундах
-        | AMOUNT - Количество
-        | MONEY - Денежная сумма
-
-        :param aggregationAllowed: (optional) Если true, то по данной колонке можно агрегировать данные
-        :type aggregationAllowed: bool
-        :param groupingAllowed: (optional) Если true, то по данной колонке можно группировать данные. По умолчанию false.
-        :type groupingAllowed: bool
-        :param filteringAllowed: (optional) Если true, то по данной колонке можно фильтровать данные. По умолчанию false.
-        :type filteringAllowed: bool
-        :param tags: (optional) Список категорий отчета, к которому относится данное поле. Справочная информация. Соответствует списку в верхнем правом углу конструктора отчета в iikoOffice.
         
-        :return: Json структура списка полей с информацией по возможностям фильтрации, агрегации и группировки.Устаревшие поля (deprecated) не выводятся.
+        :return: response
 
         """
         try:
-            urls = self.address + 'api/v2/reports/olap/columns?key=' + self.token
-            return requests.get(
-                urls,
-                params={reportType, groupingAllowed, filteringAllowed},
-                json=json,
-                timeout=DEFAULT_TIMEOUT).json()
+            url = self.address + 'api/v2/reports/olap/columns?key=' + self.token
+            return requests.get(url, params={'reportType': reportType}, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -706,7 +664,7 @@ class IikoServer(object):
         :param counteragent: (optional) id контрагента для фильтрации (необязательный, можно указать несколько).
         :department: (optional) id подразделения для фильтрации (необязательный, можно указать несколько).
         
-        :return: Возвращает количественные (amount) и денежные (sum) остатки товаров (product) на складах (store) на заданную учетную дату-время.
+        :returns: request
         См. ниже пример результата.
 
         """
@@ -715,7 +673,7 @@ class IikoServer(object):
             return requests.get(
                 urls,
                 params={timestamp, account, counteragent, department},
-                timeout=DEFAULT_TIMEOUT).json()
+                timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -732,12 +690,12 @@ class IikoServer(object):
         :param supplierId: Id поставщика.
         :type supplierId: GUID
 
-        :result: XSD Приходная накладная
+        :returns: request
         """
         try:
             urls = self.address + 'api/documents/export/incomingInvoice?key=' + self.token
             return requests.get(
-                urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
+                urls, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -754,12 +712,12 @@ class IikoServer(object):
 
         При запросе без постащиков возвращает все расходные накладные, попавшие в интервал.
 
-        :result: XSD Приходная накладная
+        :returns: request
         """
         try:
             urls = self.address + 'api/documents/export/outgoingInvoice?key=' + self.token
             return requests.get(
-                urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
+                urls, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -781,6 +739,7 @@ class IikoServer(object):
 
             При currentYear = false параметры from и to должны быть указаны.
 
+        :returns: request
 
         """
 
@@ -788,7 +747,7 @@ class IikoServer(object):
             urls = self.address + 'api/documents/export/incomingInvoice/byNumber?key=' \
                    + self.token + '&currentYear' + current_year
             return requests.get(
-                urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
+                urls, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -810,25 +769,29 @@ class IikoServer(object):
             При currentYear = true, вернет документы с указанным номером документа только за текущий год. Параметры from и to должны отсутствовать.
 
             При currentYear = false параметры from и to должны быть указаны.
+        :returns: request
         """
 
         try:
             urls = self.address + 'api/documents/export/outgoingInvoice/byNumber?key=' \
                    + self.token + '&currentYear' + current_year
             return requests.get(
-                urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
+                urls, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
 
     def production_doc(self, xml):
-        """Загрузка акта приготовления"""
+        """
+        Загрузка акта приготовления
+        :returns: request
+        """
         try:
             target_url = self.address + '/api/documents/import/productionDocument?key' + self.token
             headers = {'Content-type': 'text/xml'}
             return requests.post(
                 target_url, body=xml, headers=headers,
-                timeout=DEFAULT_TIMEOUT).content
+                timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -841,7 +804,7 @@ class IikoServer(object):
         :param dateFrom: (DD.MM.YYYY) Начальная дата.
         :param dateTo: (DD.MM.YYYY) Конечная дата.
 
-        :returns: Список всех кассовых смен в заданном интервале. В формате CloseSessionDto.
+        :returns: request
 
         """
         try:
@@ -849,7 +812,7 @@ class IikoServer(object):
                    + self.token
             return requests.get(
                 urls, params={dateFrom, dateTo},
-                timeout=DEFAULT_TIMEOUT).content
+                timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -862,7 +825,7 @@ class IikoServer(object):
         :param to_time:  Время по которое (не включительно) запрашиваются данные по кассовым сменам в формате ISO.
         :type to: yyyy-MM-ddTHH:mm:ss.SSS
 
-        :returns: Информация о кассовых сменах
+        :returns: request
 
         """
         try:
@@ -870,7 +833,7 @@ class IikoServer(object):
                    + self.token
             return requests.get(
                 urls, params={from_time, to_time},
-                timeout=DEFAULT_TIMEOUT).content
+                timeout=self.timeout)
 
         except Exception as e:
             print(e)
@@ -893,9 +856,7 @@ class IikoServer(object):
         :type name: String
 
 
-        :returns: Высылает список заказов EDI для зарегистрированного в системе iiko участника ediSystem и указанного поставщика. \
-                    В списке присутствуют также те отмененные на стороне iiko заказы, получение которых участник подтвердил ранее. \
-                    Получение как отправленных, так и отмененных заказов требуется подтверждать, см. метод edi/{ediSystem}/orders/ack
+        :returns: request
 
         """
 
@@ -903,7 +864,7 @@ class IikoServer(object):
             urls = self.address + 'edi/' + edi + '/orders/bySeller'
             payload = {'gln': gln, 'inn': inn, 'kpp': kpp, 'name': name}
             return requests.get(
-                urls, params=payload, timeout=DEFAULT_TIMEOUT).content
+                urls, params=payload, timeout=self.timeout)
 
         except Exception as e:
             print(e)
