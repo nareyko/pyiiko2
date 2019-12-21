@@ -602,6 +602,22 @@ class IikoServer:
             print(e)
 
     def olap2(self,
+              json=None):
+        """Поля OLAP-отчета
+
+        :param json: (optional) Json с полями
+        
+        :return: response
+
+        """
+        try:
+            url = self.address + '/resto/api/v2/reports/olap?key=' + self.token()
+            return requests.post(url,json=json,timeout=DEFAULT_TIMEOUT)
+
+        except Exception as e:
+            print(e)
+
+    def olap2columns(self,
               reportType,
               groupingAllowed=False,
               filteringAllowed=False,
