@@ -19,8 +19,11 @@ class IikoServer:
         self._passhash = passhash
         self._token = token
 
+    def __del__(self): 
+        self.logout()
+
     def token(self):
-        return self._token
+        return str(self._token)
 
     def login(self):
         """Метод получает новый токен
@@ -56,8 +59,8 @@ class IikoServer:
 
         try:
             logout = requests.get(
-                self.address + 'api/logout?key=' + str(self._token))
-            print("\nТокен уничтожен: " + self._token)
+                self.address + 'api/logout?key=' + self.token()
+            print("\nТокен уничтожен: " + self.token())
             self._token = None
             return logout
 
@@ -113,7 +116,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + "api/corporation/departments?key=" + self._token
+            urls = self.address + "api/corporation/departments?key=" + self.token()
             return requests.get(url=urls, timeout=DEFAULT_TIMEOUT).content
         except Exception as e:
             print(e)
@@ -126,7 +129,7 @@ class IikoServer:
 
         """
         try:
-            ur = self.address + 'api/corporation/stores?key=' + self._token
+            ur = self.address + 'api/corporation/stores?key=' + self.token()
             return requests.get(ur, timeout=DEFAULT_TIMEOUT).text
         except Exception as e:
             print(e)
@@ -154,7 +157,7 @@ class IikoServer:
                     терминалы, см. поиск терминалов /corporation/terminal/search
         """
         try:
-            ur = self.address + 'api/corporation/terminals?key=' + self._token
+            ur = self.address + 'api/corporation/terminals?key=' + self.token()
             return requests.get(ur, timeout=DEFAULT_TIMEOUT).content
 
         except requests.exceptions.ConnectTimeout:
@@ -174,7 +177,7 @@ class IikoServer:
                     и в основном только в iikoChain, т.к. в рамках iikoRMS только одна сущность с таким типом
         """
         try:
-            ur = self.address + 'api/corporation/departments/search?key=' + self._token
+            ur = self.address + 'api/corporation/departments/search?key=' + self.token()
             return requests.get(
                 ur, params=code, timeout=DEFAULT_TIMEOUT).content
 
@@ -194,7 +197,7 @@ class IikoServer:
                     и по умолчанию пусто
         """
         try:
-            ur = self.address + 'api/corporation/stores/search?key=' + self._token
+            ur = self.address + 'api/corporation/stores/search?key=' + self.token()
             return requests.get(ur, params=code)
 
         except requests.exceptions.ConnectTimeout:
@@ -210,7 +213,7 @@ class IikoServer:
         :type departmentId: string
         """
         try:
-            urls = self.address + 'api/corporation/terminal/search?key=' + self._token
+            urls = self.address + 'api/corporation/terminal/search?key=' + self.token()
             return requests.get(
                 url=urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -228,7 +231,7 @@ class IikoServer:
         :return: Список terminalDto, если существуют подходящие терминалы
         """
         try:
-            urls = self.address + 'api/corporation/terminal/search?key=' + self._token + '&anonymous=' + anonymous
+            urls = self.address + 'api/corporation/terminal/search?key=' + self.token() + '&anonymous=' + anonymous
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -240,7 +243,7 @@ class IikoServer:
     def employees(self):
         """Работники"""
         try:
-            urls = self.address + 'api/employees?key=' + self._token
+            urls = self.address + 'api/employees?key=' + self.token()
             return requests.get(urls, timeout=DEFAULT_TIMEOUT).content
 
         except Exception as e:
@@ -264,7 +267,7 @@ class IikoServer:
         :return: Список событий в формате eventsList (см. XSD Список событий)
         """
         try:
-            ur = self.address + 'api/events?key=' + self._token
+            ur = self.address + 'api/events?key=' + self.token()
             return requests.get(
                 ur, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -296,7 +299,7 @@ class IikoServer:
         """
 
         try:
-            ur = self.address + 'api/events?key=' + self._token
+            ur = self.address + 'api/events?key=' + self.token()
             return requests.post(
                 ur, data=body, timeout=DEFAULT_TIMEOUT).content
 
@@ -310,7 +313,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + 'api/events/metadata?key=' + self._token
+            urls = self.address + 'api/events/metadata?key=' + self.token()
             return requests.get(urls, timeout=DEFAULT_TIMEOUT).content
 
         except Exception as e:
@@ -347,7 +350,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + 'api/products?key=' + self._token
+            urls = self.address + 'api/products?key=' + self.token()
             return requests.get(
                 urls, params=includeDeleted, timeout=DEFAULT_TIMEOUT).content
 
@@ -370,7 +373,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + 'api/products/search/?key=' + self._token
+            urls = self.address + 'api/products/search/?key=' + self.token()
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -385,7 +388,7 @@ class IikoServer:
         :return: Список всех поставщиков. Структура employees
         """
         try:
-            urls = self.address + 'api/suppliers?key=' + self._token
+            urls = self.address + 'api/suppliers?key=' + self.token()
             return requests.get(urls, timeout=DEFAULT_TIMEOUT).content
 
         except Exception as e:
@@ -400,7 +403,7 @@ class IikoServer:
         :return: Список найденных поставщиков. Структура employees (см. XSD Сотрудники)
         """
         try:
-            urls = self.address + 'api/suppliers?key=' + self._token
+            urls = self.address + 'api/suppliers?key=' + self.token()
             payload = {'name': name, 'code': code}
             return requests.get(
                 urls, params=payload, timeout=DEFAULT_TIMEOUT).content
@@ -414,7 +417,7 @@ class IikoServer:
         :param code: (date - DD.MM.YYYY) - (optional) Дата начала действия прайс-листа, необязательный. Если параметр не указан, возвращается последний прайс-лист.
         """
         try:
-            urls = self.address + '/resto/api/suppliers/' + code + '/pricelist?key=' + self._token
+            urls = self.address + '/resto/api/suppliers/' + code + '/pricelist?key=' + self.token()
             return requests.get(
                 urls, params=date, timeout=DEFAULT_TIMEOUT).content
 
@@ -460,7 +463,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + 'api/reports/olap?report=' + report + '&key=' + self._token + '&from=' + data_from + '&to=' + data_to
+            urls = self.address + 'api/reports/olap?report=' + report + '&key=' + self.token() + '&from=' + data_from + '&to=' + data_to
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).text
 
@@ -487,7 +490,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + '/resto/api/reports/storeOperations?key=' + self._token
+            urls = self.address + '/resto/api/reports/storeOperations?key=' + self.token()
             return requests.get(
                 urls,
                 params={
@@ -506,7 +509,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + '/resto/api/reports/storeReportPresets?key=' + self._token
+            urls = self.address + '/resto/api/reports/storeReportPresets?key=' + self.token()
             return requests.get(urls, timeout=DEFAULT_TIMEOUT).content
 
         except Exception as e:
@@ -524,7 +527,7 @@ class IikoServer:
         :returns: Структура dayDishValue (см. XSD Расход продуктов по продажам)
         """
         try:
-            urls = self.address + '/resto/api/reports/productExpense?key=' + self._token
+            urls = self.address + '/resto/api/reports/productExpense?key=' + self.token()
             return requests.get(
                 urls, params={departament, kwargs},
                 timeout=DEFAULT_TIMEOUT).content
@@ -547,7 +550,7 @@ class IikoServer:
         """
 
         try:
-            urls = self.address + '/resto/api/reports/sales?key=' + self._token + \
+            urls = self.address + '/resto/api/reports/sales?key=' + self.token() + \
                    '&department=' + departament
             return requests.get(
                 urls,
@@ -569,7 +572,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + '/resto/api/reports/monthlyIncomePlan?key=' + self._token + \
+            urls = self.address + '/resto/api/reports/monthlyIncomePlan?key=' + self.token() + \
                    '&department=' + departament
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
@@ -589,7 +592,7 @@ class IikoServer:
         :returns: Структура budgetPlanItemDtoes (см. XSD План по выручке за день)
         """
         try:
-            urls = self.address + '/resto/api/reports/ingredientEntry?key=' + self._token
+            urls = self.address + '/resto/api/reports/ingredientEntry?key=' + self.token()
             return requests.get(
                 urls,
                 params={departament, includeSubtree, kwargs},
@@ -660,7 +663,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + '/resto/api/v2/reports/olap/columns?key=' + self._token
+            urls = self.address + '/resto/api/v2/reports/olap/columns?key=' + self.token()
             return requests.get(
                 urls,
                 params={reportType, groupingAllowed, filteringAllowed},
@@ -690,7 +693,7 @@ class IikoServer:
 
         """
         try:
-            urls = self.address + '/resto/reports/balance/counteragents?key=' + self._token
+            urls = self.address + '/resto/reports/balance/counteragents?key=' + self.token()
             return requests.get(
                 urls,
                 params={timestamp, account, counteragent, department},
@@ -714,7 +717,7 @@ class IikoServer:
         :result: XSD Приходная накладная
         """
         try:
-            urls = self.address + '/resto/api/documents/export/incomingInvoice?key=' + self._token
+            urls = self.address + '/resto/api/documents/export/incomingInvoice?key=' + self.token()
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -736,7 +739,7 @@ class IikoServer:
         :result: XSD Приходная накладная
         """
         try:
-            urls = self.address + '/resto/api/documents/export/outgoingInvoice?key=' + self._token
+            urls = self.address + '/resto/api/documents/export/outgoingInvoice?key=' + self.token()
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -765,7 +768,7 @@ class IikoServer:
 
         try:
             urls = self.address + '/resto/api/documents/export/incomingInvoice/byNumber?key=' \
-                   + self._token + '&currentYear' + current_year
+                   + self.token() + '&currentYear' + current_year
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -793,7 +796,7 @@ class IikoServer:
 
         try:
             urls = self.address + '/resto/api/documents/export/outgoingInvoice/byNumber?key=' \
-                   + self._token + '&currentYear' + current_year
+                   + self.token() + '&currentYear' + current_year
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -803,7 +806,7 @@ class IikoServer:
     def production_doc(self, xml):
         """Загрузка акта приготовления"""
         try:
-            target_url = self.address + '/api/documents/import/productionDocument?key' + self._token
+            target_url = self.address + '/api/documents/import/productionDocument?key' + self.token()
             headers = {'Content-type': 'text/xml'}
             return requests.post(
                 target_url, body=xml, headers=headers,
@@ -825,7 +828,7 @@ class IikoServer:
         """
         try:
             urls = self.address + 'resto/api/closeSession/list?key=' \
-                   + self._token
+                   + self.token()
             return requests.get(
                 urls, params={dateFrom, dateTo},
                 timeout=DEFAULT_TIMEOUT).content
@@ -846,7 +849,7 @@ class IikoServer:
         """
         try:
             urls = self.address + '/resto/api/events/sessions?key=' \
-                   + self._token
+                   + self.token()
             return requests.get(
                 urls, params={from_time, to_time},
                 timeout=DEFAULT_TIMEOUT).content
