@@ -7,7 +7,7 @@ from io import StringIO
 DEFAULT_TIMEOUT = 4
 
 
-class IikoServer:
+class IikoServer(object):
     """Класс отвечающий за работы с iikoSeverApi
 
 
