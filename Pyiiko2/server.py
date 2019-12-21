@@ -619,74 +619,20 @@ class IikoServer(object):
         except Exception as e:
             print(e)
 
-    def olap2columns(self,
-              reportType,
-              groupingAllowed=False,
-              filteringAllowed=False,
-              json=None):
+    def olap2columns(self, reportType):
         """Поля OLAP-отчета
 
         :param reportType: (Тип отчета)
             | ``SALES`` - По продажам.
             | ``TRANSACTIONS`` - По транзакциям.
             | ``DELIVERIES`` - По доставкам.
-        :param json: (optional) Json с полями
-        :type json: json
-
-        .. code-block:: json
-
-           {
-              "FieldName":{
-                "name":"StringValue",
-                "type":"StringValue",
-                "aggregationAllowed":"booleanValue",
-                "groupingAllowed":"booleanValue",
-                "filteringAllowed":"booleanValue",
-                "tags":[
-                  "StringValue1",
-                  "StringValue2",
-                  "...",
-                  "StringValueN"
-                ]
-              }
-            }
-
-        :param FieldName: Название колонки отчета. Именно это название используется для получения данных отчета
-        :type FieldName: string
-        :param name: Название колонки отчета в iikoOffice. Справочная информация.
-        :type name: string
-        :param type: Тип поля. Возможны следующие значения:
-        :type type: string
-
-
-        | ENUM - Перечислимые значения
-        | STRING - Строка
-        | ID - Внутренний идентификатор объекта в iiko (начиная с 5.0).
-        | DATETIME - Дата и время
-        | INTEGER - Целое
-        | PERCENT - Процент (от 0 до 1)
-        | DURATION_IN_SECONDS - Длительность в секундах
-        | AMOUNT - Количество
-        | MONEY - Денежная сумма
-
-        :param aggregationAllowed: (optional) Если true, то по данной колонке можно агрегировать данные
-        :type aggregationAllowed: bool
-        :param groupingAllowed: (optional) Если true, то по данной колонке можно группировать данные. По умолчанию false.
-        :type groupingAllowed: bool
-        :param filteringAllowed: (optional) Если true, то по данной колонке можно фильтровать данные. По умолчанию false.
-        :type filteringAllowed: bool
-        :param tags: (optional) Список категорий отчета, к которому относится данное поле. Справочная информация. Соответствует списку в верхнем правом углу конструктора отчета в iikoOffice.
         
         :return: response
 
         """
         try:
-            urls = self.address + 'api/v2/reports/olap/columns?key=' + self.token
-            return requests.get(
-                urls,
-                params={reportType, groupingAllowed, filteringAllowed},
-                json=json,
-                timeout=DEFAULT_TIMEOUT)
+            url = self.address + 'api/v2/reports/olap/columns?key=' + self.token
+            return requests.get(url, params={'reportType': reportType}, timeout=DEFAULT_TIMEOUT)
 
         except Exception as e:
             print(e)
