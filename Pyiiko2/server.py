@@ -419,7 +419,7 @@ class IikoServer(object):
         :param code: (date - DD.MM.YYYY) - (optional) Дата начала действия прайс-листа, необязательный. Если параметр не указан, возвращается последний прайс-лист.
         """
         try:
-            urls = self.address + '/resto/api/suppliers/' + code + '/pricelist?key=' + self.token
+            urls = self.address + 'api/suppliers/' + code + '/pricelist?key=' + self.token
             return requests.get(
                 urls, params=date, timeout=DEFAULT_TIMEOUT).content
 
@@ -492,7 +492,7 @@ class IikoServer(object):
 
         """
         try:
-            urls = self.address + '/resto/api/reports/storeOperations?key=' + self.token
+            urls = self.address + 'api/reports/storeOperations?key=' + self.token
             return requests.get(
                 urls,
                 params={
@@ -511,7 +511,7 @@ class IikoServer(object):
 
         """
         try:
-            urls = self.address + '/resto/api/reports/storeReportPresets?key=' + self.token
+            urls = self.address + 'api/reports/storeReportPresets?key=' + self.token
             return requests.get(urls, timeout=DEFAULT_TIMEOUT).content
 
         except Exception as e:
@@ -529,7 +529,7 @@ class IikoServer(object):
         :returns: Структура dayDishValue (см. XSD Расход продуктов по продажам)
         """
         try:
-            urls = self.address + '/resto/api/reports/productExpense?key=' + self.token
+            urls = self.address + 'api/reports/productExpense?key=' + self.token
             return requests.get(
                 urls, params={departament, kwargs},
                 timeout=DEFAULT_TIMEOUT).content
@@ -552,7 +552,7 @@ class IikoServer(object):
         """
 
         try:
-            urls = self.address + '/resto/api/reports/sales?key=' + self.token + \
+            urls = self.address + 'api/reports/sales?key=' + self.token + \
                    '&department=' + departament
             return requests.get(
                 urls,
@@ -574,7 +574,7 @@ class IikoServer(object):
 
         """
         try:
-            urls = self.address + '/resto/api/reports/monthlyIncomePlan?key=' + self.token + \
+            urls = self.address + 'api/reports/monthlyIncomePlan?key=' + self.token + \
                    '&department=' + departament
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
@@ -594,7 +594,7 @@ class IikoServer(object):
         :returns: Структура budgetPlanItemDtoes (см. XSD План по выручке за день)
         """
         try:
-            urls = self.address + '/resto/api/reports/ingredientEntry?key=' + self.token
+            urls = self.address + 'api/reports/ingredientEntry?key=' + self.token
             return requests.get(
                 urls,
                 params={departament, includeSubtree, kwargs},
@@ -613,7 +613,7 @@ class IikoServer(object):
 
         """
         try:
-            url = self.address + '/resto/api/v2/reports/olap?key=' + self.token
+            url = self.address + 'api/v2/reports/olap?key=' + self.token
             return requests.post(url,json=json,timeout=DEFAULT_TIMEOUT)
 
         except Exception as e:
@@ -681,7 +681,7 @@ class IikoServer(object):
 
         """
         try:
-            urls = self.address + '/resto/api/v2/reports/olap/columns?key=' + self.token
+            urls = self.address + 'api/v2/reports/olap/columns?key=' + self.token
             return requests.get(
                 urls,
                 params={reportType, groupingAllowed, filteringAllowed},
@@ -711,7 +711,7 @@ class IikoServer(object):
 
         """
         try:
-            urls = self.address + '/resto/reports/balance/counteragents?key=' + self.token
+            urls = self.address + 'reports/balance/counteragents?key=' + self.token
             return requests.get(
                 urls,
                 params={timestamp, account, counteragent, department},
@@ -735,7 +735,7 @@ class IikoServer(object):
         :result: XSD Приходная накладная
         """
         try:
-            urls = self.address + '/resto/api/documents/export/incomingInvoice?key=' + self.token
+            urls = self.address + 'api/documents/export/incomingInvoice?key=' + self.token
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -757,7 +757,7 @@ class IikoServer(object):
         :result: XSD Приходная накладная
         """
         try:
-            urls = self.address + '/resto/api/documents/export/outgoingInvoice?key=' + self.token
+            urls = self.address + 'api/documents/export/outgoingInvoice?key=' + self.token
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
 
@@ -785,7 +785,7 @@ class IikoServer(object):
         """
 
         try:
-            urls = self.address + '/resto/api/documents/export/incomingInvoice/byNumber?key=' \
+            urls = self.address + 'api/documents/export/incomingInvoice/byNumber?key=' \
                    + self.token + '&currentYear' + current_year
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
@@ -813,7 +813,7 @@ class IikoServer(object):
         """
 
         try:
-            urls = self.address + '/resto/api/documents/export/outgoingInvoice/byNumber?key=' \
+            urls = self.address + 'api/documents/export/outgoingInvoice/byNumber?key=' \
                    + self.token + '&currentYear' + current_year
             return requests.get(
                 urls, params=kwargs, timeout=DEFAULT_TIMEOUT).content
@@ -845,7 +845,7 @@ class IikoServer(object):
 
         """
         try:
-            urls = self.address + 'resto/api/closeSession/list?key=' \
+            urls = self.address + 'api/closeSession/list?key=' \
                    + self.token
             return requests.get(
                 urls, params={dateFrom, dateTo},
@@ -866,7 +866,7 @@ class IikoServer(object):
 
         """
         try:
-            urls = self.address + '/resto/api/events/sessions?key=' \
+            urls = self.address + 'api/events/sessions?key=' \
                    + self.token
             return requests.get(
                 urls, params={from_time, to_time},
