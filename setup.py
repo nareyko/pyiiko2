@@ -7,7 +7,7 @@ setup(
     url='https://github.com/nareyko/pyiiko2',
     author='Vadim Nareyko',
     author_email='vadim@nareyko.com',
-    version='0.3.1',
+    version='0.3.2',
     packages=find_packages(),
     include_package_data=True,
     test_suite='tests',

@@ -642,7 +642,7 @@ class IikoServer(object):
             | ``SALES`` - По продажам.
             | ``TRANSACTIONS`` - По транзакциям.
             | ``DELIVERIES`` - По доставкам.
-        
+
         :return: response
 
         """
