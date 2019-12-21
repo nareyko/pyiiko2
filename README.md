@@ -14,10 +14,10 @@ Pyiiko is the easy-to-use library for iiko ERP. This library provides a pure Pyt
 
 iiko company development of innovative systems for HoReCa industry.
 
-## Example:
+## Example
 
 ```python
-    from Pyiiko2 import IikoServer
+    from Pyiiko2.server import IikoServer
 
     i = IikoServer(ip = 'your ip', port = 'port', login = 'login', password = 'password in MD5 HASH')
     i.token()
