@@ -3,12 +3,12 @@ from os.path import join, dirname
 
 
 setup(
-    name='Pyiiko',
+    name='Pyiiko2',
     description='Library for iikoAPI',
-    url='https://github.com/gadzhi/pyiiko',
-    author='Gadzhibala Pirmagomedov',
-    author_email='gadzhibala@protonmail.com',
-    version='0.2.8',
+    url='https://github.com/nareyko/pyiiko2',
+    author='Vadim Nareyko',
+    author_email='vadim@nareyko.com',
+    version='0.3.0',
     packages=find_packages(),
     include_package_data=True,
     test_suite='tests',
