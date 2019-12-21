@@ -17,7 +17,7 @@ iiko company development of innovative systems for HoReCa industry.
 ## Example:
 
 ```python
-    from Pyiiko import IikoServer
+    from Pyiiko2 import IikoServer
 
     i = IikoServer(ip = 'your ip', port = 'port', login = 'login', password = 'password in MD5 HASH')
     i.token()
