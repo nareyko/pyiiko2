@@ -20,8 +20,8 @@ class IikoServer:
         self._token = token
 
     def __del__(self): 
-        self.logout()
-
+        if self._token is not None:
+            self.logout()
     def token(self):
         return str(self._token)
 
