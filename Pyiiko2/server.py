@@ -677,7 +677,7 @@ class IikoServer(object):
         :type filteringAllowed: bool
         :param tags: (optional) Список категорий отчета, к которому относится данное поле. Справочная информация. Соответствует списку в верхнем правом углу конструктора отчета в iikoOffice.
         
-        :return: Json структура списка полей с информацией по возможностям фильтрации, агрегации и группировки.Устаревшие поля (deprecated) не выводятся.
+        :return: response
 
         """
         try:
@@ -686,7 +686,7 @@ class IikoServer(object):
                 urls,
                 params={reportType, groupingAllowed, filteringAllowed},
                 json=json,
-                timeout=DEFAULT_TIMEOUT).json()
+                timeout=DEFAULT_TIMEOUT)
 
         except Exception as e:
             print(e)
