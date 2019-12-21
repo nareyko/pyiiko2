@@ -14,7 +14,7 @@ setup(
     test_suite='tests',
     install_requires=[
         'requests>=2.20.0',
-        'lxml>=4.1.1'
+        'defusedxml>=0.6.0'
 
     ]
 )
