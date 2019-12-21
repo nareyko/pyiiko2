@@ -624,7 +624,7 @@ class IikoServer(object):
         """Поля OLAP-отчета
 
         :param json: (optional) Json с полями
-        
+
         :return: response
 
         """
