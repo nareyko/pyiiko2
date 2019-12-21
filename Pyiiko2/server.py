@@ -14,9 +14,9 @@ class IikoServer:
     """
 
     def __init__(self, ip=None, port=None, login=None, passhash=None, token=None):
-        self.login = login
-        self.passhash = passhash
         self.address = 'http://' + ip + ':'+ (str(port) or '80') + '/resto/'
+        self._login = login
+        self._passhash = passhash
         self._token = token
 
     def token(self):
@@ -40,7 +40,7 @@ class IikoServer:
             if self._token is not None:
                 self.logout()
 
-            url = self.address + 'api/auth?login=' + self.login + "&pass=" + self.passhash
+            url = self.address + 'api/auth?login=' + self._login + "&pass=" + self._passhash
             login = requests.get(url=url, timeout=DEFAULT_TIMEOUT)
             if login.status_code == 200:
                 self._token = login.text
@@ -56,7 +56,7 @@ class IikoServer:
 
         try:
             logout = requests.get(
-                self.address + 'api/logout?key=' + self._token)
+                self.address + 'api/logout?key=' + str(self._token))
             print("\nТокен уничтожен: " + self._token)
             self._token = None
             return logout
