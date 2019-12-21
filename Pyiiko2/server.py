@@ -24,7 +24,7 @@ class IikoServer(object):
     def timeout(self):
         return str(self._timeout)
 
-    def set_timeout(timeout):
+    def set_timeout(self, timeout=DEFAULT_TIMEOUT):
         self._timeout = timeout
     @property
     def token(self):
