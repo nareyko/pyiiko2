@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import requests
-from defusedxml import etree
+from defusedxml.ElementTree import parse
 from io import StringIO
 
 DEFAULT_TIMEOUT = 4
@@ -85,7 +85,7 @@ class IikoServer(object):
         try:
             ver = requests.get(
                 self.address + 'get_server_info.jsp?encoding=UTF-8').text
-            tree = etree.parse(StringIO(ver))
+            tree = parse(StringIO(ver))
             version = ''.join(tree.xpath(r'//version/text()'))
             return version
 
