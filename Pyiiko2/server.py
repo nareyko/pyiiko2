@@ -124,7 +124,7 @@ class IikoServer(object):
             return requests.post(url=url, data=data, json=json, headers=headers, timeout=self.timeout)
         except Exception as e:
             print(path)
-            print(e)                  
+            print(e)
 # ----------------------------------Корпорации----------------------------------
 
     def departments(self, **kwargs):
@@ -249,7 +249,7 @@ class IikoServer(object):
         """
         return self.get("api/events", params=kwargs)
 
-    def events_filter(self, body, **kwargs):
+    def events_filter(self, body):
         """
         Список событий по фильтру событий и номеру заказа.
 
@@ -273,7 +273,7 @@ class IikoServer(object):
         :returns: request
         """
 
-        return self.post("api/events", data=body, params=kwargs)
+        return self.post("api/events", data=body)
 
     def events_meta(self, **kwargs):
         """
