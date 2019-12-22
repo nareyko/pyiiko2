@@ -63,8 +63,8 @@ class IikoServer(object):
             print(e)
 
     def logout(self):
-        """Уничтожение токена
-
+        """
+        Уничтожение токена
         """
 
         try:
@@ -104,9 +104,30 @@ class IikoServer(object):
         except requests.exceptions.ConnectTimeout:
             print("Не удалось подключиться к серверу")
 
+    def get(self, path, params=None):
+        """
+        Возвращает request по заданному пути с использованием токена авторизации
+        """
+        try:
+            url = self.address + path + "?key=" + self.token
+            return requests.get(url=url, params=params, timeout=self.timeout)
+        except Exception as e:
+            print(path)
+            print(e)
+
+    def post(self, path, data=None, json=None, headers=None):
+        """
+        Возвращает request по заданному пути с использованием токена авторизации
+        """
+        try:
+            url = self.address + path + "?key=" + self.token
+            return requests.post(url=url, data=data, json=json, headers=headers, timeout=self.timeout)
+        except Exception as e:
+            print(path)
+            print(e)                  
 # ----------------------------------Корпорации----------------------------------
 
-    def departments(self):
+    def departments(self, **kwargs):
         """Иерархия подразделений
 
         .. csv-table:: Типы подразделений
@@ -126,52 +147,31 @@ class IikoServer(object):
             :returns: request
 
         """
-        try:
-            urls = self.address + "api/corporation/departments?key=" + self.token
-            return requests.get(url=urls, timeout=self.timeout)
-        except Exception as e:
-            print(e)
+        return self.get("api/corporation/departments", params=kwargs)
 
-    def stores(self):
+    def stores(self, **kwargs):
         """Список складов
 
         :returns: request
-
-
         """
-        try:
-            ur = self.address + 'api/corporation/stores?key=' + self.token
-            return requests.get(ur, timeout=self.timeout)
-        except Exception as e:
-            print(e)
+        return self.get("api/corporation/stores", params=kwargs)
 
-    def groups(self):
+
+    def groups(self, **kwargs):
         """Список групп и отделений
 
         :returns: request
-
         """
-        try:
-            ur = self.address + 'api/corporation/groups?key=' + self._token
-            return requests.get(ur, timeout=self.timeout)
+        return self.get("api/corporation/groups", params=kwargs)
 
-        except requests.exceptions.ConnectTimeout:
-            print("Не удалось подключиться к серверу")
-
-    def terminals(self):
+    def terminals(self, **kwargs):
         """Список терминалов.
 
             :returns: request
-
         """
-        try:
-            ur = self.address + 'api/corporation/terminals?key=' + self.token
-            return requests.get(ur, timeout=self.timeout)
+        return self.get("api/corporation/terminals", params=kwargs)
 
-        except requests.exceptions.ConnectTimeout:
-            print("Не удалось подключиться к серверу")
-
-    def departments_find(self, code):
+    def departments_find(self, **kwargs):
         """Поиск подразделения.
 
         :param name: (optional) Код торгового предприятия. Значение элемента <code> из структуры corporateItemDto \
@@ -181,19 +181,12 @@ class IikoServer(object):
         :type code: [departmentCode]
 
         :returns: request
-
         """
-        try:
-            ur = self.address + 'api/corporation/departments/search?key=' + self.token
-            return requests.get(
-                ur, params=code, timeout=self.timeout)
+        return self.get("api/corporation/departments/search", params=kwargs)
 
-        except Exception as e:
-            print(e)
 
-    def stores_find(self, code):
+    def stores_find(self, **kwargs):
         """Список складов.
-
 
         :param code: Код склада - регулярное выражение. Если задать просто строку, то ищет любое вхождение \
                         этой строки в код склада с учетом регистра.
@@ -202,16 +195,10 @@ class IikoServer(object):
         :returns: request
 
         """
-        try:
-            url = self.address + 'api/corporation/stores/search?key=' + self.token
-            return requests.get(url, params=code)
-
-        except requests.exceptions.ConnectTimeout:
-            print("Не удалось подключиться к серверу")
+        return self.get("api/corporation/stores/search", params=kwargs)
 
     def groups_search(self, **kwargs):
         """Поиск групп отделений.
-
 
         :param name: Название группы.
         :type name: regex
@@ -219,15 +206,10 @@ class IikoServer(object):
         :type departmentId: string
         :returns: request
         """
-        try:
-            urls = self.address + 'api/corporation/terminal/search?key=' + self.token
-            return requests.get(
-                url=urls, params=kwargs, timeout=self.timeout)
+        return self.get("api/corporation/groups/search", params=kwargs)
 
-        except Exception as e:
-            print(e)
 
-    def terminals_search(self, anonymous=False, **kwargs):
+    def terminals_search(self, **kwargs):
         """Поиск терминала.
 
 
@@ -237,26 +219,16 @@ class IikoServer(object):
 
         :returns: request
         """
-        try:
-            urls = self.address + 'api/corporation/terminal/search?key=' + self.token + '&anonymous=' + anonymous
-            return requests.get(
-                urls, params=kwargs, timeout=self.timeout)
+        return self.get("api/corporation/terminal/search", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-# ----------------------------------Работники----------------------------------
-    def employees(self):
+# ----------------------------------Сотрудники----------------------------------
+    def employees(self, **kwargs):
         """
-        Работники
+        Сотрудники
+        :param includeDeleted (с 5.0) - Возвращать и действующих, и удаленных сотрудников
         :returns: request
         """
-        try:
-            urls = self.address + 'api/employees?key=' + self.token
-            return requests.get(urls, timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("api/corporation/employees", params=kwargs)
 
 # ----------------------------------События----------------------------------
     def events(self, **kwargs):
@@ -275,15 +247,9 @@ class IikoServer(object):
 
         :returns: request
         """
-        try:
-            ur = self.address + 'api/events?key=' + self.token
-            return requests.get(
-                ur, params=kwargs, timeout=self.timeout)
+        return self.get("api/events", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def events_filter(self, body):
+    def events_filter(self, body, **kwargs):
         """
         Список событий по фильтру событий и номеру заказа.
 
@@ -307,31 +273,20 @@ class IikoServer(object):
         :returns: request
         """
 
-        try:
-            ur = self.address + 'api/events?key=' + self.token
-            return requests.post(
-                ur, data=body, timeout=self.timeout)
+        return self.post("api/events", data=body, params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def events_meta(self):
+    def events_meta(self, **kwargs):
         """
         Дерево событий.
 
         :returns: request
 
         """
-        try:
-            urls = self.address + 'api/events/metadata?key=' + self.token
-            return requests.get(urls, timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("api/events/metadata", params=kwargs)
 
 # ----------------------------------Продукты----------------------------------
 
-    def products(self, includeDeleted=True):
+    def products(self, **kwargs):
         """Номенклатура.
 
         .. csv-table:: Тип элемента номенклатуры
@@ -360,13 +315,7 @@ class IikoServer(object):
 
         :returns: request
         """
-        try:
-            urls = self.address + 'api/products?key=' + self.token
-            return requests.get(
-                urls, params=includeDeleted, timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("api/products", params=kwargs)
 
     def products_find(self, **kwargs):
         """Поиск номенклатуры
@@ -386,29 +335,19 @@ class IikoServer(object):
         :returns: request
 
         """
-        try:
-            urls = self.address + 'api/products/search/?key=' + self.token
-            return requests.get(
-                urls, params=kwargs, timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("api/products/search", params=kwargs)
 
 # ----------------------------------Поставщики----------------------------------
 
-    def suppliers(self):
+    def suppliers(self, **kwargs):
         """Список всех поставщиков
 
         :returns: request
         """
-        try:
-            urls = self.address + 'api/suppliers?key=' + self.token
-            return requests.get(urls, timeout=self.timeout)
+        return self.get("api/suppliers", params=kwargs)
 
-        except Exception as e:
-            print(e)
 
-    def suppliers_find(self, name='', code=''):
+    def suppliers_find(self, **kwargs):
         """Поиск поставщика
 
         :param name: (regex) - (optional) регулярное выражение имени поставщика.
@@ -416,33 +355,20 @@ class IikoServer(object):
 
         :returns: request
         """
-        try:
-            urls = self.address + 'api/suppliers?key=' + self.token
-            payload = {'name': name, 'code': code}
-            return requests.get(
-                urls, params=payload, timeout=self.timeout)
+        return self.get("api/suppliers/search", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def suppliers_price(self, code, date=None):
+    def suppliers_price(self, code, **kwargs):
         """Поиск поставщика
 
         :param code: (date - DD.MM.YYYY) - (optional) Дата начала действия прайс-листаДата начала действия \
         прайс-листа, необязательный. Если параметр не указан, возвращается последний прайс-лист.
         :returns: request
         """
-        try:
-            urls = self.address + 'api/suppliers/' + code + '/pricelist?key=' + self.token
-            return requests.get(
-                urls, params=date, timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("api/suppliers/"+str(code)+"/pricelist", params=kwargs)
 
 # ----------------------------------Отчеты----------------------------------
 
-    def olap(self, report=None, data_from=None, data_to=None, **kwargs):
+    def olap(self, **kwargs):
         """OLAP-отчет
 
         :param report: (Тип отчета)
@@ -478,20 +404,9 @@ class IikoServer(object):
         :returns: request
 
         """
-        try:
-            urls = self.address + 'api/reports/olap?report=' + report + '&key=' + self.token + '&from=' + data_from + '&to=' + data_to
-            return requests.get(
-                urls, params=kwargs, timeout=self.timeout)
+        return self.get("api/reports/olap", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def store_operation(self,
-                        stores=None,
-                        documentTypes=None,
-                        productDetalization=True,
-                        showCostCorrections=True,
-                        presetId=None):
+    def store_operation(self, **kwargs):
         """Отчет по складским операциям
 
         :param dateFrom: (DD.MM.YYYY) Начальная дата.
@@ -507,31 +422,15 @@ class IikoServer(object):
         :returns: request
 
         """
-        try:
-            urls = self.address + 'api/reports/storeOperations?key=' + self.token
-            return requests.get(
-                urls,
-                params={
-                    stores, documentTypes, productDetalization,
-                    showCostCorrections, presetId
-                },
-                timeout=self.timeout)
+        return self.get("api/reports/storeOperations", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def store_presets(self):
+    def store_presets(self, **kwargs):
         """Пресеты отчетов по складским операциям
 
         :returns: request
 
         """
-        try:
-            urls = self.address + 'api/reports/storeReportPresets?key=' + self.token
-            return requests.get(urls, timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("api/reports/storeReportPresets", params=kwargs)
 
     def product_expense(self, departament, **kwargs):
         """Расход продуктов по продажам
@@ -544,16 +443,9 @@ class IikoServer(object):
 
         :returns: request
         """
-        try:
-            urls = self.address + 'api/reports/productExpense?key=' + self.token
-            return requests.get(
-                urls, params={departament, kwargs},
-                timeout=self.timeout)
+        return self.get("api/reports/productExpense", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def sales(self, departament, dishDetails=False, allRevenue=True, **kwargs):
+    def sales(self, **kwargs):
         """Отчет по выручке
 
         :param department: (GUID) Подразделение
@@ -566,19 +458,9 @@ class IikoServer(object):
 
         :returns: request
         """
+        return self.get("api/reports/sales", params=kwargs)
 
-        try:
-            urls = self.address + 'api/reports/sales?key=' + self.token + \
-                   '&department=' + departament
-            return requests.get(
-                urls,
-                params={dishDetails, allRevenue, kwargs},
-                timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
-
-    def mounthly_plan(self, departament, **kwargs):
+    def mounthly_plan(self, **kwargs):
         """План по выручке за день
 
         :param department: (GUID) Подразделение
@@ -589,16 +471,9 @@ class IikoServer(object):
 
 
         """
-        try:
-            urls = self.address + 'api/reports/monthlyIncomePlan?key=' + self.token + \
-                   '&department=' + departament
-            return requests.get(
-                urls, params=kwargs, timeout=self.timeout)
+        return self.get("api/reports/monthlyIncomePlan", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def ingredient_entry(self, departament, includeSubtree=False, **kwargs):
+    def ingredient_entry(self, **kwargs):
         """Отчет о вхождении товара в блюдо
 
         :param department: (GUID) Подразделение
@@ -609,33 +484,18 @@ class IikoServer(object):
 
         :returns: request
         """
-        try:
-            urls = self.address + 'api/reports/ingredientEntry?key=' + self.token
-            return requests.get(
-                urls,
-                params={departament, includeSubtree, kwargs},
-                timeout=self.timeout)
+        return self.get("api/reports/ingredientEntry", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def olap2(self,
-              json=None):
+    def olap2(self, json=None):
         """Поля OLAP-отчета
 
         :param json: (optional) Json с полями
 
         :return: response
-
         """
-        try:
-            url = self.address + 'api/v2/reports/olap?key=' + self.token
-            return requests.post(url,json=json,timeout=self.timeout)
+        return self.post("api/v2/reports/olap", json=json)
 
-        except Exception as e:
-            print(e)
-
-    def olap2columns(self, reportType):
+    def olap2columns(self, **kwargs):
         """Поля OLAP-отчета
 
         :param reportType: (Тип отчета)
@@ -646,18 +506,9 @@ class IikoServer(object):
         :return: response
 
         """
-        try:
-            url = self.address + 'api/v2/reports/olap/columns?key=' + self.token
-            return requests.get(url, params={'reportType': reportType}, timeout=self.timeout)
+        return self.get("api/v2/reports/olap/columns", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def reports_balance(self,
-                        timestamp,
-                        account=None,
-                        counteragent=None,
-                        department=None):
+    def reports_balance(self, **kwargs):
         """
         Балансы по счетам, контрагентам и подразделениям
 
@@ -672,15 +523,7 @@ class IikoServer(object):
         См. ниже пример результата.
 
         """
-        try:
-            urls = self.address + 'reports/balance/counteragents?key=' + self.token
-            return requests.get(
-                urls,
-                params={timestamp, account, counteragent, department},
-                timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("reports/balance/counteragents", params=kwargs)
 
 # ----------------------------------Накладные----------------------------------
 
@@ -696,13 +539,7 @@ class IikoServer(object):
 
         :returns: request
         """
-        try:
-            urls = self.address + 'api/documents/export/incomingInvoice?key=' + self.token
-            return requests.get(
-                urls, params=kwargs, timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("api/documents/export/incomingInvoice", params=kwargs)
 
     def invoice_out(self, **kwargs):
         """Выгрузка расходных накладных
@@ -718,15 +555,9 @@ class IikoServer(object):
 
         :returns: request
         """
-        try:
-            urls = self.address + 'api/documents/export/outgoingInvoice?key=' + self.token
-            return requests.get(
-                urls, params=kwargs, timeout=self.timeout)
+        return self.get("api/documents/export/outgoingInvoice", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def invoice_number_in(self, current_year=True, **kwargs):
+    def invoice_number_in(self, **kwargs):
         """Выгрузка приходной накладной по ее номеру
 
         :param number: номер документа.
@@ -747,16 +578,9 @@ class IikoServer(object):
 
         """
 
-        try:
-            urls = self.address + 'api/documents/export/incomingInvoice/byNumber?key=' \
-                   + self.token + '&currentYear' + current_year
-            return requests.get(
-                urls, params=kwargs, timeout=self.timeout)
+        return self.get("api/documents/export/incomingInvoice/byNumber", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def invoice_number_out(self, current_year=True, **kwargs):
+    def invoice_number_out(self, **kwargs):
         """Выгрузка расходной накладной по ее номеру.
 
 
@@ -775,34 +599,19 @@ class IikoServer(object):
             При currentYear = false параметры from и to должны быть указаны.
         :returns: request
         """
-
-        try:
-            urls = self.address + 'api/documents/export/outgoingInvoice/byNumber?key=' \
-                   + self.token + '&currentYear' + current_year
-            return requests.get(
-                urls, params=kwargs, timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("api/documents/export/outgoingInvoice/byNumber", params=kwargs)
 
     def production_doc(self, xml):
         """
         Загрузка акта приготовления
         :returns: request
         """
-        try:
-            target_url = self.address + '/api/documents/import/productionDocument?key' + self.token
-            headers = {'Content-type': 'text/xml'}
-            return requests.post(
-                target_url, body=xml, headers=headers,
-                timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        headers = {'Content-type': 'text/xml'}
+        return self.post("api/documents/import/productionDocument", data=xml, headers=headers)
 
 # ----------------------------------Получение данных по кассовым сменам:----------------------------------
 
-    def close_session(self, dateFrom=None, dateTo=None):
+    def close_session(self, **kwargs):
         """Список кассовых смен
 
         :param dateFrom: (DD.MM.YYYY) Начальная дата.
@@ -811,17 +620,9 @@ class IikoServer(object):
         :returns: request
 
         """
-        try:
-            urls = self.address + 'api/closeSession/list?key=' \
-                   + self.token
-            return requests.get(
-                urls, params={dateFrom, dateTo},
-                timeout=self.timeout)
+        return self.get("api/closeSession/list", params=kwargs)
 
-        except Exception as e:
-            print(e)
-
-    def session(self, from_time=None, to_time=None):
+    def session(self, **kwargs):
         """Информация о кассовых сменах
 
         :param from_time: Время с которого запрашиваются данные по кассовым сменам, в формате ISO.
@@ -832,19 +633,11 @@ class IikoServer(object):
         :returns: request
 
         """
-        try:
-            urls = self.address + 'api/events/sessions?key=' \
-                   + self.token
-            return requests.get(
-                urls, params={from_time, to_time},
-                timeout=self.timeout)
-
-        except Exception as e:
-            print(e)
+        return self.get("api/events/sessions", params=kwargs)
 
 # ----------------------------------EDI----------------------------------
 
-    def edi(self, edi, gln=None, inn=None, kpp=None, name=None):
+    def edi(self, edi,**kwargs):
         """Список заказов для участника EDI senderId и поставщика seller
 
         :param ediSystem: Идентификатор участника EDI, подключенной к нашему REST API. Каждый участник EDI должен \
@@ -860,16 +653,12 @@ class IikoServer(object):
         :param name: (optional) Имя поставщика
         :type name: String
 
-
         :returns: request
 
         """
-
         try:
-            urls = self.address + 'edi/' + edi + '/orders/bySeller'
-            payload = {'gln': gln, 'inn': inn, 'kpp': kpp, 'name': name}
-            return requests.get(
-                urls, params=payload, timeout=self.timeout)
+            url = self.address + 'edi/' + edi + '/orders/bySeller'
+            return requests.get(url, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
