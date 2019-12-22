@@ -110,7 +110,7 @@ class IikoServer(object):
         """
         try:
             url = self.address + path + "?key=" + self.token
-            return requests.get(url=urls, params=params, timeout=self.timeout)
+            return requests.get(url=url, params=params, timeout=self.timeout)
         except Exception as e:
             print(path)
             print(e)
@@ -121,7 +121,7 @@ class IikoServer(object):
         """
         try:
             url = self.address + path + "?key=" + self.token
-            return requests.post(url=urls, data=data, json=json, headers=headers, timeout=self.timeout)
+            return requests.post(url=url, data=data, json=json, headers=headers, timeout=self.timeout)
         except Exception as e:
             print(path)
             print(e)                  
@@ -656,11 +656,9 @@ class IikoServer(object):
         :returns: request
 
         """
-
-        return self.get("api/events/sessions", params=kwargs)
         try:
-            urls = self.address + 'edi/' + edi + '/orders/bySeller'
-            return requests.get(urls, params=kwargs, timeout=self.timeout)
+            url = self.address + 'edi/' + edi + '/orders/bySeller'
+            return requests.get(url, params=kwargs, timeout=self.timeout)
 
         except Exception as e:
             print(e)
