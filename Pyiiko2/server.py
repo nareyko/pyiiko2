@@ -286,7 +286,7 @@ class IikoServer(object):
 
 # ----------------------------------Продукты----------------------------------
 
-    def products(self, params=kwargs):
+    def products(self, **kwargs):
         """Номенклатура.
 
         .. csv-table:: Тип элемента номенклатуры
