@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 
-
 setup(
     name='Pyiiko2',
     description='Library for iikoAPI',
@@ -10,10 +9,8 @@ setup(
     version='0.3.3',
     packages=find_packages(),
     include_package_data=True,
-    test_suite='tests',
     install_requires=[
         'requests>=2.20.0',
         'defusedxml>=0.6.0'
-
     ]
 )
