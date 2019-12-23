@@ -25,7 +25,7 @@ pip install git+https://github.com/nareyko/pyiiko2.git
     login = ''
     password = ''
 
-    iiko = IikoServer(ip = 'your ip', port = 'port', login = 'login', passhash = password_hash('password'))
+    iiko = IikoServer(ip = 'your ip', port = 'port', login = 'login', passhash = password_hash(password))
     iiko.login()
     print(iiko.token)
     iiko.logout()
