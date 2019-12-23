@@ -11,7 +11,11 @@ Pyiiko is the easy-to-use library for iiko ERP. This library provides a pure Pyt
 
 iiko company development of innovative systems for HoReCa industry.
 
-## Example
+## Installation
+
+pip install git+https://github.com/nareyko/pyiiko2.git
+
+## Usage
 
 ```python
     from Pyiiko2.server import IikoServer, password_hash
