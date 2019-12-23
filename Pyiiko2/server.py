@@ -5,7 +5,7 @@ from io import StringIO
 
 DEFAULT_TIMEOUT = 4
 
-def hash(password):
+def password_hash(password):
     return hashlib.sha1(str(password).encode('utf-8')).hexdigest()
 
 class IikoServer(object):
