@@ -13,7 +13,9 @@ iiko company development of innovative systems for HoReCa industry.
 
 ## Installation
 
+```bash
 pip install git+https://github.com/nareyko/pyiiko2.git
+```
 
 ## Usage
 
