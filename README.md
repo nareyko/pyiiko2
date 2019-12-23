@@ -3,7 +3,7 @@
 
 ## Credits
 
-This library is based on <a href="https://github.com/gadzhi/pyiiko">https://github.com/gadzhi/pyiiko</a>. My goal is to update and improve it without backward compatibility to the original library.
+This library is based on <a href="https://github.com/gadzhi/pyiiko">https://github.com/gadzhi/pyiiko</a>. My goal is to have lightweight library without backward compatibility to the original library.
 
 ## About
 
