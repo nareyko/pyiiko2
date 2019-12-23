@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-import requests
+import requests, hashlib
 from defusedxml.ElementTree import parse
 from io import StringIO
 
 DEFAULT_TIMEOUT = 4
 
+def hash(password):
+    return hashlib.sha1(str(password).encode('utf-8')).hexdigest()
 
 class IikoServer(object):
     """Класс отвечающий за работы с iikoSeverApi
