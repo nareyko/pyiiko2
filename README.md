@@ -3,7 +3,7 @@
 
 ## Credits
 
-This library is based on <a href="https://github.com/gadzhi/pyiiko">https://github.com/gadzhi/pyiiko</a>. My goal is to update and improve it without backward compatibility to the original library.
+This library is based on <a href="https://github.com/gadzhi/pyiiko">https://github.com/gadzhi/pyiiko</a>. My goal is to have lightweight library without backward compatibility to the original library.
 
 ## About
 
@@ -16,7 +16,9 @@ iiko company development of innovative systems for HoReCa industry.
 ```python
     from Pyiiko2.server import IikoServer
 
-    i = IikoServer(ip = 'your ip', port = 'port', login = 'login', password = 'password in MD5 HASH')
-    i.token()
+    iiko = IikoServer(ip = 'your ip', port = 'port', login = 'login', passhash = 'SHA1(password)')
+    iiko.login()
+    print(iiko.token)
+    iiko.logout()
     
 ```
