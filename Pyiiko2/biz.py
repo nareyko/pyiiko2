@@ -29,8 +29,8 @@ class IikoBiz:
         try:
             url = self._address + 'api/0/auth/access_token?user_id=' + self._login + '&user_secret=' + self._password 
             login = requests.get(url, timeout=self.timeout)
-            if login.status_code == 200:
-                self._token = login.text
+            if login.status_code == 200 and len(login.text)>2:
+                self._token = login.text[1:-1]
             return login
 
         except requests.exceptions.ConnectTimeout:
