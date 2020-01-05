@@ -8,9 +8,8 @@ DEFAULT_TIMEOUT = 4
 class IikoBiz:
 
     def __init__(self, ip=None, port=None, login=None, password=None, token=None, timeout=DEFAULT_TIMEOUT):
-        self._ip = None
-        self._port = None
-
+        self._ip = ip
+        self._port = port
         self._login = login
         self._password = password
         self._token = token
