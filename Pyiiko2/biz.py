@@ -8,9 +8,9 @@ DEFAULT_TIMEOUT = 4
 class IikoBiz:
 
     def __init__(self, ip=None, port=None, login=None, password=None, token=None, timeout=DEFAULT_TIMEOUT):
-        self.address = 'http://' + ip + ':'+ (str(port) or '80') + '/'
-        self.login = login
-        self.password = password
+        self._address = 'http://' + ip + ':'+ (str(port) or '80') + '/'
+        self._login = login
+        self._password = password
         self._token = token
         self.set_timeout(timeout)
 
@@ -27,7 +27,7 @@ class IikoBiz:
 
     def login(self):
         try:
-            url = self.address + 'api/0/auth/access_token?user_id=' + self.login + '&user_secret=' + self.password 
+            url = self._address + 'api/0/auth/access_token?user_id=' + self._login + '&user_secret=' + self._password 
             login = requests.get(url, timeout=self.timeout)
             if login.status_code == 200:
                 self._token = login.text
@@ -41,7 +41,7 @@ class IikoBiz:
         Возвращает request по заданному пути с использованием токена авторизации
         """
         try:
-            url = self.address + path + "?key=" + self.token
+            url = self._address + path + "?key=" + self.token
             return requests.get(url=url, params=params, timeout=self.timeout)
         except Exception as e:
             print(path)
@@ -52,7 +52,7 @@ class IikoBiz:
         Возвращает request по заданному пути с использованием токена авторизации
         """
         try:
-            url = self.address + path + "?key=" + self.token
+            url = self._address + path + "?key=" + self.token
             return requests.post(url=url, data=data, json=json, headers=headers, timeout=self.timeout)
         except Exception as e:
             print(path)
