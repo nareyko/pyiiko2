@@ -19,7 +19,7 @@ class IikoBiz:
     def address(self):
         return 'http://' + str(self._ip) + ':'+ (str(self._port) or '80') + '/'
 
-    def set_address(ip=None, port=None):
+    def set_address(self, ip=None, port=None):
         self._ip = ip or self._ip
         self._port = port or self._port
 
