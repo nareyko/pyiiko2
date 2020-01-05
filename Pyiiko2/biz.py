@@ -17,7 +17,7 @@ class IikoBiz:
 
     @property
     def address(self):
-        return 'http://' + self._ip + ':'+ (str(self._port) or '80') + '/'
+        return 'http://' + str(self._ip) + ':'+ (str(self._port) or '80') + '/'
 
     def set_address(ip=None, port=None):
         self._ip = ip or self._ip
@@ -77,7 +77,7 @@ class IikoBiz:
     def orders_courier(self, **kwargs):
         return self.get("api/0/orders/get_courier_orders", params=kwargs)
 
-    def all_orders(self, **kwargs):
+    def delivery_orders(self, **kwargs):
         return self.get("api/0/orders/deliveryOrders", params=kwargs)
 
     def customer_history(self, **kwargs):
