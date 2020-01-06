@@ -77,6 +77,9 @@ class IikoBiz:
     def orders_courier(self, **kwargs):
         return self.get("api/0/orders/get_courier_orders", params=kwargs)
 
+    def get_order(self, **kwargs):
+        return self.get("api/0/orders/info", params=kwargs)
+
     def delivery_orders(self, **kwargs):
         return self.get("api/0/orders/deliveryOrders", params=kwargs)
 
