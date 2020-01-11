@@ -342,6 +342,12 @@ class IikoServer(object):
     def products2(self, **kwargs):
         return self.get("api/v2/entities/products/list", params=kwargs)
 
+    def product_groups2(self, **kwargs):
+        return self.get("api/v2/entities/products/group/list", params=kwargs)
+
+    def product_categories2(self, **kwargs):
+        return self.get("api/v2/entities/products/category/list", params=kwargs)
+
 # ---------------------------Технологические карты----------------------------------
     def assemblyCharts_getAll(self, **kwargs):
         return self.get("api/v2/assemblyCharts/getAll", params=kwargs)
