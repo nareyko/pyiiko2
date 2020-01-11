@@ -339,6 +339,31 @@ class IikoServer(object):
         """
         return self.get("api/products/search", params=kwargs)
 
+    def products2(self, **kwargs):
+        return self.get("api/v2/entities/products/list", params=kwargs)
+
+    def product_groups2(self, **kwargs):
+        return self.get("api/v2/entities/products/group/list", params=kwargs)
+
+    def product_categories2(self, **kwargs):
+        return self.get("api/v2/entities/products/category/list", params=kwargs)
+
+# ---------------------------Технологические карты----------------------------------
+    def assemblyCharts_getAll(self, **kwargs):
+        return self.get("api/v2/assemblyCharts/getAll", params=kwargs)
+
+    def assemblyCharts_getAllUpdate(self, **kwargs):
+        return self.get("api/v2/assemblyCharts/getAllUpdate", params=kwargs)
+
+    def assemblyCharts_getTree(self, **kwargs):
+        return self.get("api/v2/assemblyCharts/getTree", params=kwargs)
+
+    def assemblyCharts_getAssembled(self, **kwargs):
+        return self.get("api/v2/assemblyCharts/getAssembled", params=kwargs)
+
+    def assemblyCharts_getPrepared(self, **kwargs):
+        return self.get("api/v2/assemblyCharts/getPrepared", params=kwargs)
+
 # ----------------------------------Поставщики----------------------------------
 
     def suppliers(self, **kwargs):
