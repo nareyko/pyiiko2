@@ -85,8 +85,8 @@ class IikoBiz:
     def customer_history(self, **kwargs):
         return self.get("api/0/orders/deliveryHistoryByCustomerId", params=kwargs)
 
-    def nomenclature(self, organizationId, **kwargs):
-        return self.get(f"api/0/nomenclature/{organizationId}", params=kwargs)
+    def nomenclature(self, **kwargs):
+        return self.get("api/0/nomenclature", params=kwargs)
 
     def cities(self, **kwargs):
         return self.get("api/0/cities/cities", params=kwargs)
